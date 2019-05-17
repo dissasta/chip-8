@@ -21,7 +21,6 @@ class CPU:
         self._init_variables()
         self._init_registers()
         self._init_ram()
-        self._init_inputs()
 
     def _init_gfx(self):
         self.gfx_w = 64
@@ -42,14 +41,12 @@ class CPU:
         self._ST = UInt(8, 0)
         self._stack = [UInt(16, 0) for x in range(16)]
         self._SP = UInt(16, 0)
+        self._KEYS = [0 for x in range(16)]
 
     def _init_ram(self):
         self._ram = [UInt(16, 0) for x in range(4096)]
         self._load_fonts()
         self._load_rom()
-
-    def _init_inputs(self):
-        print('elo')
 
     def _load_fonts(self):
         pass
@@ -60,8 +57,52 @@ class CPU:
         for idx, byte in enumerate(data_stream, self._PC.value):
             self._ram[idx].value = byte
 
-    def cycle(self):
+    def key_pressed(self, event):
+        for i in range(len(self._KEYS)):
+            self._KEYS[i] = 0
+
+        if event.key == pygame.K_1:
+            self._KEYS[0x1] = 1
+        elif event.key == pygame.K_2:
+            self._KEYS[0x2] = 1
+        elif event.key == pygame.K_3:
+            self._KEYS[0x3] = 1
+        elif event.key == pygame.K_q:
+            self._KEYS[0x4] = 1
+        elif event.key == pygame.K_w:
+            self._KEYS[0x5] = 1
+        elif event.key == pygame.K_e:
+            self._KEYS[0x6] = 1
+        elif event.key == pygame.K_a:
+            self._KEYS[0x7] = 1
+        elif event.key == pygame.K_s:
+            self._KEYS[0x8] = 1
+        elif event.key == pygame.K_d:
+            self._KEYS[0x9] = 1
+        elif event.key == pygame.K_z:
+            self._KEYS[0xa] = 1
+        elif event.key == pygame.K_c:
+            self._KEYS[0xb] = 1
+        elif event.key == pygame.K_4:
+            self._KEYS[0xc] = 1
+        elif event.key == pygame.K_r:
+            self._KEYS[0xd] = 1
+        elif event.key == pygame.K_f:
+            self._KEYS[0xe] = 1
+        elif event.key == pygame.K_v:
+            self._KEYS[0xf] = 1
+        elif event.key == pygame.K_x:
+            self._KEYS[0x0] = 1
+
+    def _fetch_opcode(self):
         pass
+
+    def _decode_opcode(self):
+        pass
+
+    def cycle(self):
+        self._fetch_opcode()
+        self._decode_opcode()
 
 def main():
     rom = r'd:\PONG.ch8'
@@ -79,12 +120,8 @@ def main():
     screen = pygame.display.set_mode(scaled_res)
 
     while True:
-        core.cycle()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+        core.cycle()
 
         for x in range(core.gfx_w):
             for y in range(core.gfx_h):
@@ -95,6 +132,14 @@ def main():
 
         pygame.transform.scale(surface, scaled_res, screen)
         pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                core.key_pressed(event)
+
         clock.tick()
 
 if __name__ == "__main__":
