@@ -49,7 +49,25 @@ class CPU:
         self._load_rom()
 
     def _load_fonts(self):
-        pass
+        self._FONTS = [0xF0, 0x90, 0x90, 0x90, 0xF0, #0
+                       0x20, 0x60, 0x20, 0x20, 0x70, #1
+                       0xF0, 0x10, 0xF0, 0x80, 0xF0, #2
+                       0xF0, 0x10, 0xF0, 0x10, 0xF0, #3
+                       0x90, 0x90, 0xF0, 0x10, 0x10, #4
+                       0xF0, 0x80, 0xF0, 0x10, 0xF0, #5
+                       0xF0, 0x80, 0xF0, 0x90, 0xF0, #6
+                       0xF0, 0x10, 0x20, 0x40, 0x40, #7
+                       0xF0, 0x90, 0xF0, 0x90, 0xF0, #8
+                       0xF0, 0x90, 0xF0, 0x10, 0xF0, #9
+                       0xF0, 0x90, 0xF0, 0x90, 0x90, #A
+                       0xE0, 0x90, 0xE0, 0x90, 0xE0, #B
+                       0xF0, 0x80, 0x80, 0x80, 0xF0, #C
+                       0xE0, 0x90, 0x90, 0x90, 0xE0, #D
+                       0xF0, 0x80, 0xF0, 0x80, 0xF0, #E
+                       0xF0, 0x80, 0xF0, 0x80, 0x80] #F
+
+        for idx, byte in enumerate(self._FONTS, 80):
+            self._ram[idx].value = byte
 
     def _load_rom(self):
         prog_data = len(self._ram) - self._PC.value
@@ -57,42 +75,25 @@ class CPU:
         for idx, byte in enumerate(data_stream, self._PC.value):
             self._ram[idx].value = byte
 
-    def key_pressed(self, event):
-        for i in range(len(self._KEYS)):
-            self._KEYS[i] = 0
+    def key_pressed(self):
+        keys = pygame.key.get_pressed()
 
-        if event.key == pygame.K_1:
-            self._KEYS[0x1] = 1
-        elif event.key == pygame.K_2:
-            self._KEYS[0x2] = 1
-        elif event.key == pygame.K_3:
-            self._KEYS[0x3] = 1
-        elif event.key == pygame.K_q:
-            self._KEYS[0x4] = 1
-        elif event.key == pygame.K_w:
-            self._KEYS[0x5] = 1
-        elif event.key == pygame.K_e:
-            self._KEYS[0x6] = 1
-        elif event.key == pygame.K_a:
-            self._KEYS[0x7] = 1
-        elif event.key == pygame.K_s:
-            self._KEYS[0x8] = 1
-        elif event.key == pygame.K_d:
-            self._KEYS[0x9] = 1
-        elif event.key == pygame.K_z:
-            self._KEYS[0xa] = 1
-        elif event.key == pygame.K_c:
-            self._KEYS[0xb] = 1
-        elif event.key == pygame.K_4:
-            self._KEYS[0xc] = 1
-        elif event.key == pygame.K_r:
-            self._KEYS[0xd] = 1
-        elif event.key == pygame.K_f:
-            self._KEYS[0xe] = 1
-        elif event.key == pygame.K_v:
-            self._KEYS[0xf] = 1
-        elif event.key == pygame.K_x:
-            self._KEYS[0x0] = 1
+        self._KEYS[0x1] = keys[pygame.K_1]
+        self._KEYS[0x2] = keys[pygame.K_2]
+        self._KEYS[0x3] = keys[pygame.K_3]
+        self._KEYS[0x4] = keys[pygame.K_q]
+        self._KEYS[0x5] = keys[pygame.K_w]
+        self._KEYS[0x6] = keys[pygame.K_e]
+        self._KEYS[0x7] = keys[pygame.K_a]
+        self._KEYS[0x8] = keys[pygame.K_s]
+        self._KEYS[0x9] = keys[pygame.K_d]
+        self._KEYS[0xA] = keys[pygame.K_z]
+        self._KEYS[0xB] = keys[pygame.K_c]
+        self._KEYS[0xC] = keys[pygame.K_4]
+        self._KEYS[0xD] = keys[pygame.K_r]
+        self._KEYS[0xE] = keys[pygame.K_f]
+        self._KEYS[0xF] = keys[pygame.K_v]
+        self._KEYS[0x0] = keys[pygame.K_x]
 
     def _fetch_opcode(self):
         pass
@@ -137,8 +138,9 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                core.key_pressed(event)
+            #elif event.type == pygame.KEYDOWN:
+            #    core.key_pressed(event)
+        core.key_pressed()
 
         clock.tick()
 
